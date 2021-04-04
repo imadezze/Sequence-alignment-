@@ -1,0 +1,67 @@
+Alignement entre protéines.
+###########################
+
+Alignez deux à deux les séquences des sous-unités alpha, beta et zeta 
+de l'hemoglobine humaine (HBA_HUMAN, HBB_HUMAN et HBAZ_HUMAN dans uniprot).
+[il faut donc faire 3 alignements].
+Utilisez la matrice de substitution BLOSUM62 (fournie dans cost.c)
+et un modèle affine pour les indels avec indelOpen=-10 et indelExtend=-0.5.
+
+NOTE: si votre programme ne marche pas vous pouvez quand meme répondre
+aux questions en utilisant l'executable fourni aliProtAffine_ntm , qui
+a été produit en compilant aliProtAffine.c et utilise donc ces paramètres.
+
+Questions:
+1. Pour alpha vs beta, comparez vos résultats avec ceux de l'exemple en bas 
+de la page suivante (background vert):
+http://emboss.sourceforge.net/apps/release/6.6/emboss/apps/water.html
+[NOTE: il s'agit de la doc d'un programme appelé "water" qui prétend
+être une implémentation de Smith-Waterman, mais le modèle de coût des
+indels est affine (impossible avec SW)... en réalité c'est très 
+probablement une implémentation d'Altschul-Erickson!]
+
+### Réponse:
+
+Nos résultats contiennent tous les alignements possibles, conformément à l'executable fourni aliProtAffine_ntm
+qui confirme la validité de notre programme.
+
+Par contre, les résultats de la page : http://emboss.sourceforge.net/apps/release/6.6/emboss/apps/water.html
+ne donnent qu'un seul alignement, ceci est peut être dû au fait que le programme s'arrête au premier score maximal
+rencontré.
+
+
+2. Comment interprétez-vous les résultats de ces trois alignements?
+[mots-clés: evolution / duplication / divergence]
+
+### Réponse:
+
+Concernant les alignements des sous-unités alpha/beta et beta/zeta,
+on constate qu'il y a plusieurs alignements qui donnent le meilleur score.
+En effet, à un moment donné, le chemin se duplique sur une petite séquence,
+puis se refusionne en un seul alignement. Ceci peut être interprêté par le
+phénomène de duplication.
+De plus, à la fin de l'alignement, s'ajoute un mismatch (R/H) de coût nul,
+ce qui ne diminue pas le score final. On peut dire qu'une évolution a eu lieu.
+
+Cependant, les séquences de alpha/zeta ne donnent qu'un seul alignement
+de score optimal élevé par rapport à celui des alignements de alpha/beta
+et beta/zeta. Ainsi, la réduction du score maximal est, d'une manière ou d'une autre,
+liée à une duplication.
+
+Les séquences, obtenues sur http://www.uniprot.org , sont:
+
+>sp|P69905|HBA_HUMAN Hemoglobin subunit alpha OS=Homo sapiens GN=HBA1 PE=1 SV=2
+MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSHGSAQVKGHG
+KKVADALTNAVAHVDDMPNALSALSDLHAHKLRVDPVNFKLLSHCLLVTLAAHLPAEFTP
+AVHASLDKFLASVSTVLTSKYR
+
+>sp|P68871|HBB_HUMAN Hemoglobin subunit beta OS=Homo sapiens GN=HBB PE=1 SV=2
+MVHLTPEEKSAVTALWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLSTPDAVMGNPK
+VKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKLHVDPENFRLLGNVLVCVLAHHFG
+KEFTPPVQAAYQKVVAGVANALAHKYH
+
+>sp|P02008|HBAZ_HUMAN Hemoglobin subunit zeta OS=Homo sapiens GN=HBZ PE=1 SV=2
+MSLTKTERTIIVSMWAKISTQADTIGTETLERLFLSHPQTKTYFPHFDLHPGSAQLRAHG
+SKVVAAVGDAVKSIDDIGGALSKLSELHAYILRVDPVNFKLLSHCLLVTLAARFPADFTA
+EAHAAWDKFLSVVSSVLTEKYR
+

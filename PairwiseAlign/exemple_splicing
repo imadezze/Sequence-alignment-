@@ -1,0 +1,112 @@
+Alignement d'un ARN sur le génome.
+##################################
+
+Alignez la sequence de l'ARN messager TP53.hAug10 successivement sur
+les deux fragments d'ADN génomique ci-dessous (provenant des chromosomes 10 et 17).
+Utilisez un modèle affine pour les indels avec indelOpen=-100 et indelExtend=-0.05 .
+Comparez avec un alignement avec le modèle linéaire (indelOpen=-10).
+
+NOTE: si votre programme ne marche pas vous pouvez quand meme répondre
+aux questions en utilisant les executables fournis swDnaAffineLongGaps_ntm et
+swDnaLinear_ntm, qui utilisent ces paramètres.
+
+
+Questions: 
+1. Comment interprétez-vous les résultats (chromosome 10 vs 17)?
+
+Le chromosome 10 donne 1 résultat de taille petite et de score 80 dans le modéle affine, alors que dans
+le modéle lineaire on obtient un score de 149. Ceci peut étre intérprété en valeur absolue par la faiblesse du coût
+des indels linéaires qui offre une possibilité de trouver des matchs, en comparaison avec
+le modèle affine où on a un coût plus grand pour indelOpen de 100, et dont il est moins probable de faire -100.
+
+Pour le chromosome 17, le score est plus grand dans le modèle affine que dans le modèle linéaire, ceci est expliqué
+par le fait que la plupart des gaps viennent de indelExtend qui ne diminue que 0.05, alors que dans le chromosome 10
+la plupart des gaps viennent de indelopen. Pour le modéle linéaire malgré qu'on obtient tous des matchs,
+le nombre des matchs n'est pas élevé pour avoir un score plus grand que dans le modèle affine.
+
+On obtient plusieurs résultats dans le modèle affine pour 17 que dans le modèle linéaire, et on remarque que cet
+effet est inversé pour le 10.
+
+
+
+2. Quel modèle de cout est mieux adapté à ce type de problème, et pourquoi?
+
+Le modèle affine est plus adapté à ce type de problème.
+Dans la plupart des cas, considérer que l'insertion d'un gap possède un coût constant ne correspond pas à un modèle
+réaliste. On préférera un modèle pour lequel un gap de longueur k est plus probable que k gaps de longueur 1.
+Ce qui est le cas pour le chromosome 17 car on obtient des gaps continus constituant un seul gap, et dont le
+coût en valeur absolue n'est pas trop élevé pour chacun des gaps car on ne diminue que 0.05, alors que dans le modèle
+linéaire plusieurs gaps éloignés ont un coûp plus grand.
+Comme la complexité des deux modèles n'est pas la même: le modèle de gap affine n'augmente pas
+la complexité du problème d'alignement. Les deux ont O(n²)
+
+3. Si vous avez implémenté l'extension optionnelle 2 (afficher tous les 
+alignements optimaux), ou à défaut en utilisant les executables fournis: 
+on obtient un fait une vingtaine d'alignements optimaux pour l'alignement 
+vs le chromosome 17. Mais on sait par ailleurs que la plupart des introns 
+commencent par GT et se terminent par AG.
+A la lumière de cette information, analysez plus en détail ces alignements.
+
+[mots-clés: intron / splicing / exon]
+La plupart des alignements commence par TG et se termine par AC, ce qui nous mène à remarquer
+que deux grandes parties des chaînes au début et à la fin des alignements sont similaires.
+On comprend donc que la différence entre les alignements se situe dans le milieu des chaines, où il y a
+de longues indels, mais vu qu'elles sont amorties, ceci revient au coût d'une seule indel, donnant ainsi
+plus de chance et de liberté pour trouver des matchs augmentant le score.
+
+>mRNA TP53.hAug10, 2271 bp
+tgaggccaggagatggaggctgcagtgagctgtgatcacaccactgtgctccagcctgagtgacagagcaagaccctatctcaaaaaaaaaaaaaaaaaa
+gaaaagctcctgaggtgtagacgccaactctctctagctcgctagtgggttgcaggaggtgcttacgcatgtttgtttctttgctgccgtcttccagttg
+ctttatctgttcacttgtgccctgactttcaactctgtctccttcctcttcctacagtactcccctgccctcaacaagatgttttgccaactggccaaga
+cctgccctgtgcagctgtgggttgattccacacccccgcccggcacccgcgtccgcgccatggccatctacaagcagtcacagcacatgacggaggttgt
+gaggcgctgcccccaccatgagcgctgctcagatagcgatggtctggcccctcctcagcatcttatccgagtggaaggaaatttgcgtgtggagtatttg
+gatgacagaaacacttttcgacatagtgtggtggtgccctatgagccgcctgaggttggctctgactgtaccaccatccactacaactacatgtgtaaca
+gttcctgcatgggcggcatgaaccggaggcccatcctcaccatcatcacactggaagactccagtggtaatctactgggacggaacagctttgaggtgcg
+tgtttgtgcctgtcctgggagagaccggcgcacagaggaagagaatctccgcaagaaaggggagcctcaccacgagctgcccccagggagcactaagcga
+gcactgcccaacaacaccagctcctctccccagccaaagaagaaaccactggatggagaatatttcacccttcagatccgtgggcgtgagcgcttcgaga
+tgttccgagagctgaatgaggccttggaactcaaggatgcccaggctgggaaggagccaggggggagcagggctcactccagccacctgaagtccaaaaa
+gggtcagtctacctcccgccataaaaaactcatgttcaagacagaagggcctgactcagactgacattctccacttcttgttccccactgacagcctccc
+acccccatctctccctcccctgccattttgggttttgggtctttgaacccttgcttgcaataggtgtgcgtcagaagcacccaggacttccatttgcttt
+gtcccggggctccactgaacaagttggcctgcactggtgttttgttgtggggaggaggatggggagtaggacataccagcttagattttaaggtttttac
+tgtgagggatgtttgggagatgtaagaaatgttcttgcagttaagggttagtttacaatcagccacattctaggtaggggcccacttcaccgtactaacc
+agggaagctgtccctcactgttgaattttctctaacttcaaggcccatatctgtgaaatgctggcatttgcacctacctcacagagtgcattgtgagggt
+taatgaaataatgtacatctggccttgaaaccaccttttattacatggggtctagaacttgacccccttgagggtgcttgttccctctccctgttggtcg
+gtgggttggtagtttctacagttgggcagctggttaggtagagggagttgtcaagtctctgctggcccagccaaaccctgtctgacaacctcttggtgaa
+ccttagtacctaaaaggaaatctcaccccatcccacaccctggaggatttcatctcttgtatatgatgatctggatccaccaagacttgttttatgctca
+gggtcaatttcttttttcttttttttttttttttttctttttctttgagactgggtctcgctttgttgcccaggctggagtggagtggcgtgatcttggc
+ttactgcagcctttgcctccccggctcgagcagtcctgcctcagcctccggagtagctgggaccacaggttcatgccaccatggccagccaacttttgca
+tgttttgtagagatggggtctcacagtgttgcccaggctggtctcaaactcctgggctcaggcgatccacctgtctcagcctcccagagtgctgggatta
+caattgtgagccaccacgtccagctggaagggtcaacatcttttacattctgcaagcacatctgcattttcaccccacccttcccctccttctccctttt
+tatatcccatttttatatcgatctcttattttacaataaaactttgctgccacctgtgtgtctgaggggtg
+
+
+> human genome portion from 10q23.3 forward strand
+gccccctcctaccgccccctgccctgccctgccctcccctcgcccggcgcggtcccgtccgcctctcgctcgcctcccgcctcccctcggtcttccgagg
+cgcccgggctcccggcgcggcggcggagggggcgggcaggccggcgggcggtgatgtggcgggactctttatgcgctgcggcaggatacgcgctcggcgc
+tgggacgcgactgcgctcagttctctcctctcggaagctgcagccatgatggaagtttgagagttgagccgctgtgaggcgaggccgggctcaggcgagg
+gagatgagagacggcggcggccgcggcccggagcccctctcagcgcctgtgagcagccgcgggggcagcgccctcggggagccggccggcctgcggcggc
+ggcagcggcggcgtttctcgcctcctcttcgtcttttctaaccgtgcagcctcttcctcggcttctcctgaaagggaaggtggaagccgtgggctcgggc
+gggagccggctgaggcgcggcggcggcggcggcacctcccgctcctggagcgggggggagaagcggcggcggcggcggccgcggcggctgcagctccagg
+gagggggtctgagtcgcctgtcaccatttccagggctgggaacgccggagagttggtctctccccttctactgcctccaacacggcggcggcggcggctg
+gcacatccagggacccgggccggttttaaacctcccgtgcgccgccgccgcaccccccgtggcccgggctccggaggccgccggcggaggcagccgttcg
+gaggattattcgtcttctccccattccgctgccgccgctgccaggcctctggctgctgaggagaagcaggcccagtcgctgcaaccatccagcagccgcc
+gcagcagccattacccggctgcggtccagagccaagcggcggcagagcgaggggcatcagctaccgccaagtccagagccatttccatcctgcagaagaa
+gccccgccaccagcagcttctgccatctctctcctcctttttcttcagccacaggctcccagacatgacagccatcatcaaagagatcgttagcagaaac
+aaaaggagatatcaagaggatggattcgacttagacttgacctgtatccatttctgcggctgctcctctttacctttctgtcactctcttagaacgtggg
+agtagacggatgcgaaaatgtccgtagtttgggtgactataacatttaaccctggtcaggttgctaggtcatatattttgtgtttcctttctgtgtattc
+
+
+> human genome portion from 17p13.1 reverse strand
+tgaggccaggagatggaggctgcagtgagctgtgatcacaccactgtgctccagcctgagtgacagagcaagaccctatctcaaaaaaaaaaaaaaaaaa
+gaaaagctcctgaggtgtagacgccaactctctctagctcgctagtgggttgcaggaggtgcttacgcatgtttgtttctttgctgccgtcttccagttg
+ctttatctgttcacttgtgccctgactttcaactctgtctccttcctcttcctacagtactcccctgccctcaacaagatgttttgccaactggccaaga
+cctgccctgtgcagctgtgggttgattccacacccccgcccggcacccgcgtccgcgccatggccatctacaagcagtcacagcacatgacggaggttgt
+gaggcgctgcccccaccatgagcgctgctcagatagcgatggtgagcagctggggctggagagacgacagggctggttgcccagggtccccaggcctctg
+attcctcactgattgctcttaggtctggcccctcctcagcatcttatccgagtggaaggaaatttgcgtgtggagtatttggatgacagaaacacttttc
+gacatagtgtggtggtgccctatgagccgcctgaggtctggtttgcaactggggtctctgggaggaggggttaagggtggttgtcagtggccctccaggt
+gagcagtaggggggctttctcctgctgcttatttgacctccctataaccccatgagatgtgcaaagtaaatgggtttaactattgcacagttgaaaaaac
+tgaagcttacagaggctaagggcctcccctgcttggctgggcgcagtggctcatgcctgtaatcccagcactttgggaggccaaggcaggcggatcacga
+ggttgggagatcgagaccatcctggctaacggtgaaaccccgtctctactgaaaaatacaaaaaaaaattagccgggcgtggtgctgggcacctgtagtc
+ccagctactcgggaggctgaggaaggagaatggcgtgaacctgggcggtggagcttgcagtgagctgagatcacgccactgcactccagcctgggcgaca
+gagcgagattccatctcaaaaaaaaaaaaaaaaggcctcccctgcttgccacaggtctccccaaggcgcactggcctcatcttgggcctgtgttatctcc
+taggttggctctgactgtaccaccatccactacaactacatgtgtaacagttcctgcatgggcggcatgaaccggaggcccatcctcaccatcatcacac
